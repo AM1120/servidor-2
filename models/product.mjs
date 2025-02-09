@@ -21,7 +21,7 @@ export const getAllProducts = async (callback) => {
 export const updateProduct = async (productId, productData, callback) => {
     const { nombre, descripcion, img, precio } = productData; // Ahora también destructuramos stock
 
-    if (!nombre || !precio || stock == null) {
+    if (!nombre || !precio) {
         return callback({ message: 'Nombre, precio ' }, null);
     }
 
@@ -29,7 +29,7 @@ export const updateProduct = async (productId, productData, callback) => {
     const query = `
         UPDATE productos
         SET nombre = $1, descripcion = $2, img = $3, precio = $4
-        WHERE id = $6
+        WHERE id = $5
         RETURNING *;
     `;
 
@@ -49,21 +49,21 @@ export const updateProduct = async (productId, productData, callback) => {
 
 // Crear un producto nuevo
 export const createProduct = async (productData, callback) => {
-    const { nombre, descripcion, img, precio, stock } = productData; // Destructuramos stock e img directamente
+    const { nombre, descripcion, img, precio} = productData; // Destructuramos  e img directamente
 
-    if (!nombre || !precio || stock == null) {
-        return callback({ message: 'Nombre, precio y stock son requeridos' }, null);
+    if (!nombre || !precio) {
+        return callback({ message: 'Nombre, precio son requeridos' }, null);
     }
 
     // Consulta SQL para insertar un nuevo producto, incluyendo el campo stock y la URL de la imagen
     const query = `
-        INSERT INTO productos (nombre, descripcion, img, precio, stock)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO productos (nombre, descripcion, img, precio)
+        VALUES ($1, $2, $3, $4)
         RETURNING *;
     `;
 
     // Usamos directamente la URL que viene en el campo img
-    const values = [nombre, descripcion || null, img || null, precio, stock];
+    const values = [nombre, descripcion || null, img || null, precio];
 
     try {
         const res = await pool.query(query, values); // Ejecutamos la consulta
@@ -123,8 +123,7 @@ export const updateProduct = async (productId, productData, callback) => {
                 descripcion = $2,
                 img = $3,
                 precio = $4,
-                stock = $5
-            WHERE id = $6
+            WHERE id = $5
             RETURNING *;
         `;
         const values = [
@@ -132,7 +131,6 @@ export const updateProduct = async (productId, productData, callback) => {
             productData.descripcion,
             imageUrl,
             productData.precio,
-            productData.stock,
             productId
         ];
 
@@ -173,16 +171,15 @@ export const createProduct = async (productData, callback) => {
         }
 
         const insertQuery = `
-            INSERT INTO Productos (nombre, descripcion, img, precio, stock)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO Productos (nombre, descripcion, img, precio)
+            VALUES ($1, $2, $3, $4)
             RETURNING id;
         `;
         const values = [
             productData.nombre,
             productData.descripcion,
             imageUrl,
-            productData.precio,
-            productData.stock
+            productData.precio
         ];
 
         const res = await client.query(insertQuery, values);

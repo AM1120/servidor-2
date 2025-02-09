@@ -8,10 +8,10 @@ const upload = multer({ storage: multer.memoryStorage() });
 const router = express.Router();
 
 
-router.get('/products', productController.getAllProducts)
-router.put('/products/:id',productController.updateProduct)
+router.get('/product', productController.getAllProducts)
+router.put('/product/:id',productController.updateProduct)
 router.post('/product-create',productController.createProduct)
-router.delete('/products/:id', productController.deleteProduct);
+router.delete('/product/:id', productController.deleteProduct);
 
 router.post('/crear-cliente',userController.createUser)
 router.post('/login',userController.login)
