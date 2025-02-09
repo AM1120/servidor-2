@@ -19,21 +19,21 @@ export const getAllProducts = async (callback) => {
 };
 
 export const updateProduct = async (productId, productData, callback) => {
-    const { nombre, descripcion, img, precio, stock } = productData; // Ahora también destructuramos stock
+    const { nombre, descripcion, img, precio } = productData; // Ahora también destructuramos stock
 
     if (!nombre || !precio || stock == null) {
-        return callback({ message: 'Nombre, precio y stock son requeridos' }, null);
+        return callback({ message: 'Nombre, precio ' }, null);
     }
 
     // La consulta SQL para actualizar el producto incluyendo stock
     const query = `
         UPDATE productos
-        SET nombre = $1, descripcion = $2, img = $3, precio = $4, stock = $5
+        SET nombre = $1, descripcion = $2, img = $3, precio = $4
         WHERE id = $6
         RETURNING *;
     `;
 
-    const values = [nombre, descripcion || null, img || null, precio, stock, productId];
+    const values = [nombre, descripcion || null, img || null, precio, productId];
 
     try {
         const res = await pool.query(query, values); // Ejecutamos la consulta
