@@ -16,7 +16,7 @@ export const createCliente = async (userData, callback) => {
     `;
 
     // Usamos directamente la URL que viene en el campo img
-    const values = [nombres, apellidos, contrasena,n_doc,t_doc, 1];
+    const values = [nombres, apellidos, contrasena,n_doc,t_doc, 2];
 
     try {
         const res = await pool.query(query, values); // Ejecutamos la consulta
