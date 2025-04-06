@@ -28,8 +28,8 @@ export const updateProduct = async (productId, productData, callback) => {
     // La consulta SQL para actualizar el producto incluyendo stock
     const query = `
         UPDATE productos
-        SET nombre = $1, descripcion = $2, img = $3, precio = $4
-        WHERE id = $5
+        SET nombre = $1, descripcion = $2, img = $3, precio = $4, categoria= $5
+        WHERE id = $6
         RETURNING *;
     `;
 
@@ -52,13 +52,13 @@ export const createProduct = async (productData, callback) => {
     const { nombre, descripcion, img, precio} = productData; // Destructuramos  e img directamente
 
     if (!nombre || !precio) {
-        return callback({ message: 'Nombre, precio son requeridos' }, null);
+        return callback({ message: 'Nombre, precio y categegoria son requeridos' }, null);
     }
 
     // Consulta SQL para insertar un nuevo producto, incluyendo el campo stock y la URL de la imagen
     const query = `
         INSERT INTO productos (nombre, descripcion, img, precio, categoria)
-        VALUES ($1, $2, $3, $4)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING *;
     `;
 
@@ -123,7 +123,8 @@ export const updateProduct = async (productId, productData, callback) => {
                 descripcion = $2,
                 img = $3,
                 precio = $4,
-            WHERE id = $5
+                categoria= $5,
+            WHERE id = $6
             RETURNING *;
         `;
         const values = [
@@ -131,6 +132,7 @@ export const updateProduct = async (productId, productData, callback) => {
             productData.descripcion,
             imageUrl,
             productData.precio,
+            productData.categoria,
             productId
         ];
 
@@ -171,15 +173,16 @@ export const createProduct = async (productData, callback) => {
         }
 
         const insertQuery = `
-            INSERT INTO Productos (nombre, descripcion, img, precio)
-            VALUES ($1, $2, $3, $4)
+            INSERT INTO Productos (nombre, descripcion, img, precio, categoria)
+            VALUES ($1, $2, $3, $4, $5)
             RETURNING id;
         `;
         const values = [
             productData.nombre,
             productData.descripcion,
             imageUrl,
-            productData.precio
+            productData.precio,
+            productData.categoria
         ];
 
         const res = await client.query(insertQuery, values);
