@@ -19,7 +19,7 @@ export const getAllProducts = async (callback) => {
 };
 
 export const updateProduct = async (productId, productData, callback) => {
-    const { nombre, descripcion, img, precio } = productData; // Ahora también destructuramos stock
+    const { nombre, descripcion, img, precio, categoria } = productData; // Ahora también destructuramos stock
 
     if (!nombre || !precio) {
         return callback({ message: 'Nombre, precio ' }, null);
@@ -29,11 +29,11 @@ export const updateProduct = async (productId, productData, callback) => {
     const query = `
         UPDATE productos
         SET nombre = $1, descripcion = $2, img = $3, precio = $4, categoria= $5
-        WHERE id = $6
+        WHERE id = $5
         RETURNING *;
     `;
 
-    const values = [nombre, descripcion || null, img || null, precio, productId];
+    const values = [nombre, descripcion || null, img || null, precio, categoria, productId];
 
     try {
         const res = await pool.query(query, values); // Ejecutamos la consulta
@@ -49,10 +49,10 @@ export const updateProduct = async (productId, productData, callback) => {
 
 // Crear un producto nuevo
 export const createProduct = async (productData, callback) => {
-    const { nombre, descripcion, img, precio} = productData; // Destructuramos  e img directamente
+    const { nombre, descripcion, img, precio, categoria} = productData; // Destructuramos  e img directamente
 
-    if (!nombre || !precio) {
-        return callback({ message: 'Nombre, precio y categegoria son requeridos' }, null);
+    if (!nombre || !precio || !categoria) {
+        return callback({ message: 'Nombre, precio y categoria son requeridos' }, null);
     }
 
     // Consulta SQL para insertar un nuevo producto, incluyendo el campo stock y la URL de la imagen
@@ -63,7 +63,7 @@ export const createProduct = async (productData, callback) => {
     `;
 
     // Usamos directamente la URL que viene en el campo img
-    const values = [nombre, descripcion || null, img || null, precio, categoria];
+    const values = [nombre, descripcion || null, img || null, precio || null, categoria];
 
     try {
         const res = await pool.query(query, values); // Ejecutamos la consulta
